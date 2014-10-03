@@ -1,0 +1,100 @@
+{block content}
+
+<h1 n:block="title">Novy projekt</h1>
+
+{form newProjectForm}
+<table id="new_proj" class="float_left">
+	
+	<tr><th>{label proj_type /}</th><td colspan="3">
+                {foreach $proj_type as $type => $label}
+                    {if $iterator->last}
+                        {$form['proj_type']->getControlPart($type)->onclick("enableDisableIdEl('frm-newProjectForm-other_proj_type')")}{$form['proj_type']->getLabelPart($type)}
+                    {else}
+                        {$form['proj_type']->getControlPart($type)}{$form['proj_type']->getLabelPart($type)}
+                    {/if}
+                {/foreach}
+                {input other_proj_type}
+            </td></tr>
+        <tr><th>{label proj_name /}</th><td colspan="3">{input proj_name}</td></tr>
+	<tr><th>{label customer /}</th><td colspan="4">{input customer}</td></tr>
+
+        <tr><th>Jazyky</th><th class="left">{label source_language /}</th><th class="left">{label target_language /}</th></tr>
+        <tr>
+            <td></td>
+            <td>
+                <table class="">
+                    {foreach $languages as $language}
+                        <tr>
+                            <td>
+                                {$form['source_language']->getControlPart($language)}
+                                {$language->icon|renderLanguageIcon}
+                                {$language->name}
+                            </td>
+                        </tr>
+                    {/foreach}
+                </table>
+            </td>
+
+            <td>
+                <table class="">
+                    {foreach $languages as $language}
+                        <tr>
+                            <td>
+                                {$form['target_language']->getControlPart($language)->onclick("renderTranslators($language->id);")}
+                                {$language->icon|renderLanguageIcon}
+                                {$language->name}
+                            </td>
+                        </tr>
+                    {/foreach}
+                </table>
+            </td>
+	</tr>
+        
+
+	<tr><th>Pocet NS</th>		<td colspan="2"><input type="number" id="standard_pages" name="pages" onchange="countFunction(this.form);"></td></tr>
+	
+	<tr><th>Celkova cena</th>	<td colspan="2"><input type="number" name="total_price" disabled> Kč</td></tr>
+	<tr><th>Zisk</th>		<td colspan="2"><input type="number" name="revenue" disabled> Kč</td></tr>
+	<tr><th>Marze</th>		<td colspan="2"><input type="number" name="margin" disabled> %</td></tr>
+
+        
+	<tr>
+		<th>{label extra_payment_type /}</th><td>{input extra_payment_type}</td>
+	</tr>
+        <tr>
+		<th>{label extra_payment_amount_percent /}</th><td>{input extra_payment_amount_percent}% {input extra_payment_amount_money}Kč</td>
+	</tr>
+	<tr>
+		<th>{label discount_type /}</th><td>{input discount_type}</td>
+	</tr>
+	<tr>
+		<th>{label discount_amount_percent /}</th><td>{input discount_amount_percent}% {input discount_amount_money}Kč</td>
+	</tr>
+	<tr>
+		<th>{label field /}</th><td>{input field}</td>
+	</tr>
+	<tr>
+		<th>{label proj_leader /}</th><td>{input proj_leader}</td>
+	</tr>
+        
+        <tr>
+                <th>Termin</th><td></td>
+        </tr>
+        
+        <tr>
+                <th>{label notes /}</th><td>{input notes}</td>
+        </tr>
+        
+        <tr>
+                <th>{label submit /}</th><td>{input submit}</td>
+        </tr>
+</table>
+                
+<table id="new_proj_translators" class="float_right">
+    <tr><th>Překladatel</th><th>Cena / NS</th><th>Cena celkem</th><th>Cena pro zákazníka</th></tr>
+    <tr><th>Prekladatel 1</th>	<td><input type="checkbox" name="translator1" onchange="countFunction(this.form);"><input type="number" size="50" name="price1_dod" onchange="countFunction(this.form);" disabled> Kč</td><td><input type="number" name="" disabled> Kč</td><td><input type="number" name="price1_zak" disabled> Kč</td></tr>
+    <tr><th>Prekladatel 2</th>	<td><input type="checkbox" name="translator2" onchange="countFunction(this.form);"><input type="number" size="50" name="price2_dod" onchange="countFunction(this.form);" disabled> Kč</td><td><input type="number" name="" disabled> Kč</td><td><input type="number" name="price1_zak" disabled> Kč</td></tr>
+</table>
+{/form}
+
+{/block}

@@ -1,0 +1,89 @@
+{block content}
+
+<h1 n:block="title">Nový jazyk</h1>
+
+{form newLanguageForm class => 'newLanguageForm'}
+
+    <table id="">
+
+        <tr>
+            <th>{label name /}</th>
+            <td colspan="2">{input name} {$form['name']->getOption('description')}</td>
+        </tr>
+
+        <tr class="required">
+            <th>{label instrumental_case /}</th>
+            <td colspan="2">{input instrumental_case} {$form['instrumental_case']->getOption('description')}</td>
+        </tr>
+
+        <tr class="required">
+            <th>{label url_name /}</th>
+            <td colspan="2">{input url_name} {$form['url_name']->getOption('description')}</td>
+        </tr>
+
+        <tr class="required">
+            <th>{label shortcut /}</th>
+            <td colspan="2">{input shortcut} {$form['shortcut']->getOption('description')}</td>
+        </tr>
+
+        <tr class="required">
+            <th>{label icon /}</th>
+            <td colspan="2">{input icon} {$form['icon']->getOption('description')}</td>
+        </tr>
+
+        <tr class="required">
+            <th>{label flag /}</th>
+            <td colspan="2">{input flag} {$form['flag']->getOption('description')}</td>
+        </tr>
+
+        <tr class="required">
+            <th>{label picture1 /}</th>
+            <td colspan="2">{input picture1} {$form['picture1']->getOption('description')}</td>
+        </tr>
+
+        <tr class="required">
+            <th>{label picture2 /}</th>
+            <td colspan="2">{input picture2} {$form['picture2']->getOption('description')}</td>
+        </tr>
+
+        <tr>
+            <th>{label active /}</th>
+            <td colspan="2">{input active} {$form['active']->getOption('description')}</td>
+        </tr>
+
+        <tr>
+            <th class="valign_top">Poskytované služby</th>
+            <td>{input translations}</td><td>{input translation_price} Kč</td>
+        </tr>
+
+        <tr>
+            <th>{label proofreading /}</th>
+            <td>{input proofreading}</td><td>{input proofreading_price} Kč</td>
+        </tr>
+
+        <tr>
+            <th>{label interpretation /}</th>
+            <td>{input interpretation}</td><td>{input interpretation_price} Kč</td>
+        </tr>
+
+        <tr>
+            <th>{label language_sentence /}</th>
+            <td colspan="2">{input language_sentence}</td>
+        </tr>
+
+        <tr>
+            <th class="valign_top">{label about_language /}</th>
+            <td colspan="2">{input about_language}</td>
+        </tr>
+
+        <tr>
+            <th>{label submit /}</th>
+            <td colspan="2">{input submit}</td>
+        </tr>
+
+
+    </table>
+        
+{/form}        
+
+{/block}

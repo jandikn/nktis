@@ -1,0 +1,40 @@
+{block content}
+
+<h1 n:block="title">Obory</h1>
+
+<div id="context_menu">
+    <a n:href="Field:new" class="mybutton b_add" title="Nový obor">Nový obor</a>
+</div>
+
+{snippet tasks}
+<table class="default">
+    <thead>
+    <tr>
+        <th>Id</th>
+        <th>Název</th>
+        <th>URL</th>
+        <th>Odvětví</th>
+        <th>Priorita</th>
+        <th>Editace</th>
+    </tr>
+    </thead>
+    <tbody>
+    {var $i=0}
+    {foreach $fields as $field}
+    <tr class="show">
+        <td>{++$i}</td>
+        <td class="no-wrap">{$field->name}</td>
+        <td>{$field->url_name}</td>
+        <td>{$field->specification}</td>
+        <td>{$field->priority}</td>
+        <td class="no-wrap">
+            <a n:href="Field:edit $field->id" class="mybutton b_edit">Edit</a>
+            <a n:href="Field:delete $field->id" class="mybutton b_delete" onclick="confirm('Smazat obor {$field->name}?');">Delete</a>
+        </td>
+    </tr>
+    {/foreach}
+    </tbody>
+</table>
+{/snippet}
+
+{/block}

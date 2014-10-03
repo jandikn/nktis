@@ -1,0 +1,23 @@
+{block content}
+
+<h1 n:block="title">Nový obor</h1>
+
+{form newFieldForm}
+<table>
+	<tr>
+		<th>{label name /}</th><td colspan="3">{input name} <span class="help">Technický<span></td>
+	</tr>
+	<tr>
+		<th>{label url_name /}</th><td colspan="4">{input url_name} <span class="help">technicke-preklady<span></td>
+	</tr>
+	<tr>
+		<th>{label priority /}</th><td>{input priority} <span class="help">20<span></td>
+	</tr>
+	<tr>
+		<th>{label specification /}</th><td>{input specification} <span class="help">Návody;Manuály;Příručky;...<span></td>
+	</tr>
+	<tr><td></td><td>{input submit}</td></tr>
+</table>
+{/form}
+
+{/block}

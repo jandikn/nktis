@@ -1,0 +1,68 @@
+{block content}
+
+<h1 n:block="title">Zákazníci BLACKLIST</h1>
+
+<div id="context_menu">
+    <div class="float_right">
+        <span class="mybutton b_arrowup" onclick="hideAllDetail();" id="show_all">Schovat vše</span>
+        <span class="mybutton b_arrowdown" onclick="showAllDetail();" id="hide_all">Rozbalit vše</span>
+    </div>
+</div>
+
+<table class="default">
+    <thead>
+    <tr>
+        <th class="center">Filtry</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+    </tr>
+    <tr>
+        <th class="center">Id</th>
+        <th class="center">Zakázky</th>
+        <th class="center">Obrat</th>
+        <th>Společnost</th>
+        <th>Titul</th>
+        <th>Jméno</th>
+        <th>Příjmení</th>
+        <th>E-mail</th>
+        <th>Telefon</th>
+        <th class="center">Fakturace</th>
+        <th>Editace</th>
+        <th class="center">Detaily</th>
+    </tr>
+    </thead>
+    <tbody>
+    {var $i=0}
+    {foreach $customers as $customer}
+    <tr class="show">
+        <td class="row_no">{++$i}</td>
+        <td class="center"></td>
+        <td class="center">1 Kč</td>
+        <td>{$customer->company}</td>
+        <td class="right">{$customer->title}</td>
+        <td class="no-wrap">{$customer->name}</td>
+        <td class="no-wrap">{$customer->surname}</td>
+        <td><a href="mailto:{$customer->email}" title="Napsat e-mail" class="send_email"><img src="{$basePath}/images/send_email.png" alt="e-mail">{$customer->email}</a></td>
+        <td class="no-wrap">+{$customer->tel_preset} {$customer->telephone|removeWhiteSpaces|number:0:',':' '}</td>
+        <td class="no-wrap">{$customer->legal_form|invoicingShort}</td>
+        <td class="no-wrap">
+            <a n:href="customer:edit $customer->id" class="mybutton b_edit">Edit</a>
+            <a n:href="customer:activate $customer->id" class="mybutton b_activate" onclick="return confirm('Aktivovat zákazníka?');">Aktivovat</a>
+        </td>
+        <td class="center"><span onclick="showHideDetail({$customer->id});" id="details_{$customer->id}" class="mybutton b_arrowup b_arrowdown no_text" title="Detaily"></span></td>
+    </tr>
+    <tr class="hidden" id="{$customer->id}">
+        <td class="row_no"></td><td class="details" colspan="11" width="900">
+        <table class="inner">
+            <tr><td>Webové stránky</td><td>{$customer->web}</td></tr>
+            <tr><td>Adresa</td><td>{$customer->address}, {$customer->postcode} {$customer->city}</td></tr>
+            <tr><td>IČ</td><td>{$customer->reg_no}</td></tr>
+            <tr><td>DIČ</td><td>{$customer->tax_id_no}</td></tr>
+            <tr><td>Splatnost faktur</td><td>{$customer->due_date} dní</td></tr>
+            <tr><td>Poznámky</td><td>{if $customer->notes == ""}-{else}{$customer->notes}{/if}</td></tr>
+        </table></td>
+    </tr>
+    {/foreach}
+    </tbody>
+</table>
+
+
+{/block}

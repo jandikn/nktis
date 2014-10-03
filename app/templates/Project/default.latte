@@ -1,0 +1,227 @@
+{block content}
+
+<h1 n:block="title">Projekty</h1>
+
+<div id="context_menu">
+    <a href="#" data-reveal-id="project_type" class="mybutton b_add" title="Nový projekt">Nový projekt</a>
+    <!-- hidden inline form -->
+    <div id="project_type" class="reveal-modal">
+        <h2>Vyberte typ projektu</h2>
+        <table class="popup">
+        <tr><td><a n:href="Project:translation">Překlad</a></td></tr>
+        <tr><td><a n:href="Project:proofreading">Korektura</a></td></tr>
+        <tr><td><a n:href="Project:transproof">Překlad + korektura</a></td></tr>
+        <tr><td><a n:href="Project:interpretation">Tlumočení</a></td></tr>
+        </table>
+        <a class="close-reveal-modal">&#215;</a>
+    </div>
+
+    <a n:href="Project:invoice" class="mybutton b_note" title="Fakturace">Fakturace</a>
+
+    <div class="float_right">
+        <span class="mybutton b_arrowup" onclick="hideAllDetail();" id="show_all">Schovat vše</span>
+        <span class="mybutton b_arrowdown" onclick="showAllDetail();" id="hide_all">Rozbalit vše</span>
+    </div>
+</div>
+
+<table n:snippet="projects" class="default">
+    <thead>
+    <tr class="filter">
+        <th class="center">Filtry</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+    </tr>
+    <tr>
+        <th class="center">Id</th>
+        <th>Projekt</th>
+        <th>Zákazník</th>
+        <th>Termín / Fakturace</th>
+        <th class="no-wrap">Cena bez DPH</th>
+        <th class="no-wrap">Cena s DPH</th>
+        <th class="no-wrap">Editace</th>
+        <th class="no-wrap">Stav</th>
+        <th>Detaily</th>
+    </tr>
+    </thead>
+    <tbody>
+    
+    {foreach $projects as $project}
+    {if $project->status == 0} <tr class="show poptavka">
+    {elseif $project->status == 1} <tr class="show aktualni">
+    {elseif $project->status == 2} <tr class="show fakturace">
+    {elseif $project->status == 3} <tr class="show nezaplaceny">
+    {else} <tr class="show nevyuctovany">
+    {/if}
+    
+        <td class="row_no">{$iterator->counter}</td>
+        <td>
+            {$project->number_of_order} {$project->name}
+            {if $project->proj_notes != NULL}<span class="float_right">
+            <a href="#" data-reveal-id="project_notes_{$project->id}" class="" title="{$project->proj_notes}"><img src="{$basePath}/images/note.png" style="margin-bottom: -4px;"></a></span>
+            <!-- hidden inline form -->
+            <div id="project_notes_{$project->id}" class="reveal-modal">
+                <h2>Poznámka</h2>
+                <table class="popup">
+                    <tr><td>{$project->proj_notes}</td></tr>
+                </table>
+                <a class="close-reveal-modal">&#215;</a>
+            </div>
+            {/if}
+        </td>
+        
+        <td>                
+            <a href="#" data-reveal-id="customerProfile_{$project->customer->id}" class="" title="Detail zákazníka">{if $project->customer->company != null}<strong>{$project->customer->company}</strong>{/if} {$project->customer->surname} {$project->customer->name}</a>
+            <!-- hidden inline form -->
+            <div id="customerProfile_{$project->customer->id}" class="reveal-modal">
+                <h2>Detail zákazníka</h2>
+                <table class="popup">
+                <tr><td>Jméno a příjmení</td>   <td>{$project->customer->surname}  {$project->customer->name}</td></tr>
+                <tr><td>Společnost</td>         <td>{if $project->customer->company != null}{$project->customer->company}{/if}</td></tr>
+                <tr><td>Adresa</td>             <td>{$project->customer->address}<br>{$project->customer->postcode|postcode}, {$project->customer->city}</td></tr>
+                <tr><td>Email</td>              <td>{$project->customer->email|email}</td></tr>
+                <tr><td>Telefon</td>            <td>+{$project->customer->tel_preset} {$project->customer->telephone|removeWhiteSpaces|number:0:',':' '}</td></tr>
+                <tr><td>IČ</td>                 <td>{$project->customer->reg_no}</td></tr>
+                <tr><td>DIČ</td>                <td>{$project->customer->tax_id_no}</td></tr>
+                <tr><td>Web</td>                <td>{$project->customer->web}</td></tr>
+                <tr><td>Fakturace</td>          <td>{$project->customer->legal_form|invoicing} - {$project->customer->due_date} dní</td></tr>
+                </table>
+                <a class="close-reveal-modal">&#215;</a>
+            </div>
+            
+        </td>
+        
+        <td class="right no-wrap">
+            {if $project->status <= 1}{$project->deadline|date:'j. n. Y - H'} h
+            {elseif $project->status == 2}-
+            {elseif  $project->status == 3}
+                {if $project->invoice_expired_email == 1}<img src="{$basePath}/images/error0.png" alt="Upomínka 1" title="První upomínka automaticky odeslána" class="float_left">
+                {elseif $project->invoice_expired_email == 2}<img src="{$basePath}/images/error.png" alt="Upomínka 2" title="Druhá upomínka automaticky odeslána" class="float_left">
+                {elseif $project->invoice_expired_email == 3}<img src="{$basePath}/images/error2.png" alt="Vymáhání" title="Vymáhání částky" class="float_left">
+                {/if}
+                {$project->invoice_date|date:'j. n. Y'}
+            {else}{$project->invoice_date|date:'j. n. Y'}
+            {/if}
+        </td>
+        
+        <td class="right no-wrap no-wrap">{$project->price|number:0:',':' '} Kč</td>
+        
+        <td class="right no-wrap">{if $project->customer->legal_form == 'corporate'}{$project->price|priceWithVAT|number:0:',':' '} Kč {else} - {/if}</td>
+        
+        <td class="no-wrap">
+            <a n:href="Project:edit $project->id" class="mybutton b_edit" title="Editovat projekt">Edit</a>
+            <a href="#" data-reveal-id="cancelProject_{$project->id}" class="mybutton b_cancel" title="Zrušit projekt">Zrušit</a>
+            <div id="cancelProject_{$project->id}" class="reveal-modal">
+                 <h2>Zrušení projektu</h2>
+                 <form action="/nktis/www/project/default?do=cancelProjectForm-submit" method="post" id="frm-cancelProjectForm">
+                 <table class="default"><tr><td>Název</td><td>{$project->name}</td></tr>
+                    <tr class="required">
+                            <td><label for="frm-cancelProjectForm-reason">Důvod zrušení</label></td>
+                            <td><textarea name="reason" id="frm-cancelProjectForm-reason" data-nette-rules='[{"op":":filled","msg":"Je nutné zadat název oboru."}]'></textarea></td>
+                    </tr>
+                    <tr>
+                            <td><input type="hidden" name="project_id" id="frm-cancelProjectForm-project_id" value="{$project->id}"></td>
+                            <td><input type="submit" name="_submit" class="mybutton b_ok disabled" id="frm-cancelProjectForm-submit" value="Zrušit projekt"></td>
+                    </tr>
+                 </table>
+                 </form>
+                 <a class="close-reveal-modal">&#215;</a>
+            </div>
+        </td>
+        
+        <td>
+            {if $project->status == 0}<a n:href="Project:activateProject $project->id" class="mybutton b_go" title="Aktivovat projekt" onclick="return confirm('Aktivovat projekt?');">Aktivovat</a>
+            
+            {elseif $project->status == 1} 
+                {if $project->proj_notes == NULL}<a n:href="Project:projectFinish" class="mybutton b_ok" title="Dokončit projekt" onclick="return confirm('Dokončit projekt?');">Dokončit</a>
+                {else}<a n:href="Project:finish" class="mybutton b_ok" title="Dokončit projekt" onclick="return confirm('Pozor, poznámka:\n\n{$project->proj_notes}\n\nDokončit projekt?');">Dokončit</a>{/if}
+            {elseif $project->status == 2}
+                <a href="#" data-reveal-id="fakturace_{$project->id}"
+                {if $project->customer->legal_form == 'individual'} class="mybutton b_invoice_individual" 
+                {elseif $project->customer->legal_form == 'corporate'} class="mybutton b_invoice_corporate"
+                {else}<a href="#" data-reveal-id="fakturace_{$project->id}" class="mybutton b_invoice_abroad"
+                {/if} title="Fakturovat">Fakturovat&nbsp;{$project->customer->due_date}&nbsp;dní</a>
+                <!-- hidden inline form -->
+                <div id="fakturace_{$project->id}" class="reveal-modal left">
+                    <h2>Fakturace</h2>
+                    <table class="popup">
+                        <tr><td>Projekt</td>        <td>{$project->name}</td></tr>
+                        <tr><td>Jméno</td>          <td>{$project->customer->name} {$project->customer->surname}</td></tr>
+                        <tr><td>Společnost</td>     <td>{if $project->customer->company != null}{$project->customer->company}{else}-{/if}</td></tr>
+                        <tr><td>Adresa</td>         <td>{$project->customer->address}<br>{$project->customer->postcode|postcode}, {$project->customer->city}</td></tr>
+                        <tr><td>Email</td>          <td>{$project->customer->email}</td></tr>
+                        <tr><td>Telefon</td>        <td>{$project->customer->telephone|removeWhiteSpaces|number:0:',':' '}</td></tr>
+                        <tr><td>IČ</td>             <td>{$project->customer->reg_no}</td></tr>
+                        <tr><td>DIČ</td>            <td>{$project->customer->tax_id_no}</td></tr>
+                        <tr><td>Web</td>            <td>{$project->customer->web}</td></tr>
+                        <tr><td>Fakturace</td>      <td class="bold">{$project->customer->legal_form|invoicing} - <span class="red">{$project->customer->due_date} dní</span></td></tr>
+                        {form uploadSingleInvoiceForm}
+                            <tr class="upload"><td>{label invoice /}{input project_id, value => $project->id}</td><td>{input invoice}{input submit}</td></tr>
+                        {/form}
+                    </table>
+                    <a class="close-reveal-modal">&#215;</a>
+                </div>
+            {elseif $project->status == 3}<a n:href="projectPaid! $project->id" class="mybutton b_pay ajax" title="Projekt zaplacen" onclick="return confirm('Projekt zaplacen?');">Zaplaceno</a>
+            {else}<a n:href="Project:projectAccounted" class="mybutton b_account" title="Vyúčtovat projekt" onclick="return confirm('Vyúčtovat projekt?');">Vyúčtovat</a>
+            {/if}
+        </td>
+        
+        <td class="center"><span onclick="showHideDetail({$project->id});" id="details_{$project->id}" class="mybutton b_arrowup b_arrowdown no_text" title="Detaily"></span></td>
+    </tr>
+
+    <tr class="hidden" id="{$project->id}">
+        <td class="row_no"></td>
+        <td class="details" colspan="8">
+            <table class="details">
+                <tr><td>Typ projektu</td><td>{$project->type}</td></tr>
+                <tr><td>Projekt založil</td><td>{$project->creator->name} {$project->creator->surname}</td></tr>
+                <tr><td>Vedoucí projektu</td><td>{$project->leader->name} {$project->leader->surname}</td></tr>
+                <tr><td>Zdrojový jazyk</td><td><img src="{$basePath}/images/languages/{$project->source_lang->icon}" alt="{$project->source_lang->shortcut}"> {$project->source_lang->name}</td></tr>
+                <tr><td>Cílové jazyky a překladatelé</td><td>
+                    <table class="inner">
+                        <tr><th>Jazyk</th><th>Překladatel</th><th>Cena</th>{if $project->status >= 2}<th>Vyúčtování</th>{/if}</tr>
+                        {foreach $project->related('translator_project') as $translator_project}
+                            <tr>
+                                <td class="no-wrap"><img src="{$basePath}/images/languages/{$translator_project->language->icon}" alt="{$translator_project->language->shortcut}"> {$translator_project->language->name}</td>
+                                <td class="no-wrap">
+                                    <a href="#" data-reveal-id="translatorProfile_{$translator_project->translator->id}" class="">{$translator_project->translator->post_id|renderTranslatorIcon}{$translator_project->translator->name} {$translator_project->translator->surname}</a>
+                                    <!-- hidden inline form -->
+                                    <div id="translatorProfile_{$translator_project->translator->id}" class="reveal-modal">
+                                        <h2>Detail překladatele</h2>
+                                        <table class="popup">
+                                        <tr><td>Jméno a příjmení</td>   <td>{$translator_project->translator->surname}  {$translator_project->translator->name}</td></tr>
+                                        <tr><td>Adresa</td>   <td>{$translator_project->translator->address}<br>{$translator_project->translator->postcode} {$translator_project->translator->city}</td></tr>
+                                        <tr><td>Email</td>    <td>{$translator_project->translator->email}</td></tr>
+                                        <tr><td>Telefon</td>  <td>{$translator_project->translator->tel_preset} {$translator_project->translator->telephone|number:0:',':' '}</td></tr>
+                                        <tr><td>Telefon 2</td><td>{$translator_project->translator->telephone2 ? $translator_project->translator->telephone2 : '-'}</td></tr>
+                                        <tr><td>IČ</td>       <td>{$translator_project->translator->reg_no}</td></tr>
+                                        <tr><td>DIČ</td>      <td>{$translator_project->translator->tax_id_no}</td></tr>
+                                        </table>
+                                        <a class="close-reveal-modal">&#215;</a>
+                                    </div>
+                                </td>
+                                <td class="no-wrap right">{$translator_project->payment|number:0:'.':' '} Kč</td>
+                                {if $project->status >= 2}
+                                <td n:snippet="accountTranslator-$translator_project->translator_id">
+                                    {if $translator_project->accounted == 0}<a n:href="accountTranslator! $translator_project->translator_id, $translator_project->project_id" class="ajax mybutton b_account">Vyúčtovat</a>
+                                    {else}<a n:href="Project:default" class="mybutton b_account disabled" onclick="alert('Tomuto překladateli již byla odměna vyúčtována.');">Vyúčtováno</a>{/if}
+                                </td>
+                                {/if}
+                            </tr>
+                        {/foreach}
+                    </table>
+                </td></tr>
+                <tr><td>Obor</td><td>{$project->field->name}</td></tr>
+                <tr><td>Datum vytvoření</td><td>{$project->start|date:'j. n. Y - H'} h</td></tr>
+                <tr><td>Deadline</td><td>{$project->deadline|date:'j. n. Y - H'} h</td></tr>
+                <tr><td>Fakturace (splatnost)</td><td>{$project->customer->legal_form|invoicing} - {$project->customer->due_date} dní</td></tr>
+                <tr><td>Zisk</td><td>{$project->income} Kč</td></tr>
+                <tr><td>Marže</td><td>{$project->income} %</td></tr>
+                {if $project->invoice_id != NULL}<tr><td>Faktura</td><td><a href="{$basePath}/invoices/{$project->invoice->year}/{$project->invoice->filename}" title="Faktura {$project->invoice->filename}" target="_blank"><img src="{$basePath}/images/pdf.png" alt="PDF">{$project->invoice->filename}</a></td></tr>{/if}
+                <tr><td>Poznámky</td><td>{$project->proj_notes}</td></tr>
+            </table>
+        </td>
+    </tr>
+
+    {/foreach}    
+    </tbody>
+</table>
+
+{/block}

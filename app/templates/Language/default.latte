@@ -1,0 +1,68 @@
+{block content}
+
+<h1 n:block="title">Jazyky</h1>
+
+<div id="context_menu">
+    <a n:href="language:new" class="mybutton b_add" title="Nový jazyk">Nový jazyk</a>
+    
+    <div class="float_right">
+        <span class="mybutton b_arrowup" onclick="hideAllDetail();" id="show_all">Schovat vše</span>
+        <span class="mybutton b_arrowdown" onclick="showAllDetail();" id="hide_all">Rozbalit vše</span>
+    </div>
+</div>
+
+<table n:snippet="languages" class="default">
+    <thead>
+    <tr>
+        <th class="center">Filtry</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+    </tr>
+    <tr>
+        <th class="center">Id</th>
+        <th class="center">Ikonka</th>
+        <th>Jazyk</th>
+        <th>Cena překlady</th>
+        <th>Cena korektury</th>
+        <th>Cena tlumočení</th>
+        <th>Rodilý mluvčí</th>
+        <th class="center">Zkratka</th>
+        <th>Editace</th>
+        <th class="center">Detaily</th>
+    </tr>
+    </thead>
+    <tbody>
+    {foreach $languages as $language}
+    {if $language->active}<tr class="show">{else}<tr class="show inactive">{/if}
+        <td class="row_no">{$iterator->counter}</td>
+        <td class="center"><img src="{$basePath}/images/languages/{$language->icon}" alt="{$language->shortcut}"></td>
+        <td>{$language->name}</td>
+        <td>{if $language->translations == 0}-{else}{$language->translations} Kč{/if}</td>
+        <td>{if $language->proofreading == 0}-{else}{$language->proofreading} Kč{/if}</td>
+        <td>{if $language->interpretation == 0}-{else}{$language->interpretation} Kč{/if}</td>
+        <td>{if $language->active}Ano{else}Ne{/if}</td>
+        <td class="center">{$language->shortcut}</td>
+        <td class="no-wrap">
+            <a n:href="language:edit $language->id" class="mybutton b_edit">Edit</a>
+            {if $language->active}<a n:href="deactivatelanguage! $language->id" class="mybutton b_delete ajax" onclick="confirm('Deaktivovat jazyk {$language->name}?');">Deaktivovat</a>
+            {else}<a n:href="activatelanguage! $language->id" class="mybutton b_activate ajax" onclick="confirm('Aktivovat jazyk {$language->name}?');">Aktivovat</a>{/if}
+        </td>
+        <td class="center"><span onclick="showHideDetail({$language->id});" id="details_{$language->id}" class="mybutton b_arrowup b_arrowdown no_text" title="Detaily"></span></td>
+    </tr>
+    <tr class="hidden" id="{$language->id}">
+        <td class="row_no"></td><td class="" colspan="11" width="900">
+        <table class="">
+            <tr><td>URL název</td><td>{$language->url_name}</td></tr>
+            <tr><td>7. pád</td><td>{$language->instrumental_case}</td></tr>
+            <tr><td>Pozadí a doprovodné obrázky</td><td><img src="{$basePath}/images/about_language/{$language->flag}" alt="Pozadí" height="150">
+                                                        <img src="{$basePath}/images/about_language/{$language->picture1}" alt="Doprovodný obrázek 1" height="150">
+                                                        <img src="{$basePath}/images/about_language/{$language->picture2}" alt="Doprovodný obrázek 2" height="150"></td></tr>
+            <tr><td>S námi budete rozumět světu</td><td>{$language->language_sentence}</td></tr>
+            <tr><td>O jazyku</td><td>{$language->about_language}</td></tr>
+            <tr><td>Překladatelé</td><td>{foreach $language->related('translator_language') as $translator_language}{if $translator_language->translator->active}{$translator_language->translator|translatorProfile}<br>{/if}{/foreach}</td></tr>
+        </table></td>
+    </tr>
+    {/foreach}
+    </tbody>
+</table>
+
+
+{/block}

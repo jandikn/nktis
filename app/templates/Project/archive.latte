@@ -1,0 +1,132 @@
+{block content}
+
+<h1 n:block="title">Archív</h1>
+
+<div id="context_menu">
+    <div class="float_left">
+    {control archiveYearForm}
+    </div>
+    
+    <div class="float_right">
+        <span class="mybutton b_arrowup" onclick="hideAllDetail();" id="show_all">Schovat vše</span>
+        <span class="mybutton b_arrowdown" onclick="showAllDetail();" id="hide_all">Rozbalit vše</span>
+    </div>
+</div>
+
+<table class="default">
+    <thead>
+    <tr class="filter">
+        <th class="center">Filtry</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+    </tr>
+    <tr>
+        <th class="center">Id</th>
+        <th>Název</th>
+        <th>Zákazník</th>
+        <th>Vytvořeno</th>
+        <th>Termín</th>
+        <th class="no-wrap">Cena bez DPH</th>
+        <th class="no-wrap">Cena s DPH</th>
+        <th>Faktura</th>
+        <th>Detaily</th>
+    </tr>
+    </thead>
+    <tbody>
+    {var $i=0}
+
+    {foreach $projects as $project}
+    <tr class="show aktualni">
+    
+        <td class="row_no">{++$i}</td>
+        <td>
+            {$project->name} 
+            {if $project->proj_notes != NULL}<span class="float_right">
+            <a href="#" data-reveal-id="project_notes_{$project->id}" class="mybutton b_note no_text" title="Poznámka"></a></span>
+            <!-- hidden inline form -->
+            <div id="project_notes_{$project->id}" class="reveal-modal">
+                <h2>Poznámky</h2>
+                <p>{$project->proj_notes}</p>
+                <a class="close-reveal-modal">&#215;</a>
+            </div>
+            {/if}
+        </td>
+        <td><a href="#" data-reveal-id="customerProfile_{$project->customer->id}" class="mybutton b_info" title="Detaily zákazníka">{if $project->customer->company != null} <strong>{$project->customer->company}</strong>{/if} {$project->customer->surname} {$project->customer->name}</a>
+            <!-- hidden inline form -->
+            <div id="customerProfile_{$project->customer->id}" class="reveal-modal">
+                <table class="popup">
+                <tr><th colspan='2'>Detail zákazníka</th></tr>
+                <tr><td>Jméno a příjmení</td>   <td>{$project->customer->surname}  {$project->customer->name}</td></tr>
+                <tr><td>Společnost</td>         <td>{if $project->customer->company != null}{$project->customer->company}{/if}</td></tr>
+                <tr><td>Adresa</td>             <td>{$project->customer->address}<br>{$project->customer->postcode}, {$project->customer->city}</td></tr>
+                <tr><td>Email</td>              <td>{$project->customer->email|email}</td></tr>
+                <tr><td>Telefon</td>            <td>{$project->customer->telephone}</td></tr>
+                <tr><td>Telefon 2</td>          <td>{$project->customer->telephone ? $project->customer->telephone : '-'}</td></tr>
+                <tr><td>IČ</td>                 <td>{$project->customer->reg_no}</td></tr>
+                <tr><td>DIČ</td>                <td>{$project->customer->tax_id_no}</td></tr>
+                <tr><td>Web</td>                <td>{$project->customer->web}</td></tr>
+                <tr><td>Fakturace</td>          <td>{$project->customer->legal_form|invoicing} - {$project->customer->due_date} dní</td></tr>
+                </table>
+                <a class="close-reveal-modal">&#215;</a>
+            </div>
+            
+            </td>
+        <td class="right no-wrap">
+            {$project->start|date:'j. n. Y'}
+        </td>
+        <td class="right no-wrap">
+            {$project->deadline|date:'j. n. Y'}
+        </td>
+        <td class="right no-wrap">{$project->price|number:0:',':' '} Kč</td>
+        <td class="right no-wrap">{if $project->customer->legal_form == 'corporate'}{$project->price|priceWithVAT|number:0:',':' '} Kč {else} - {/if}</td>
+        <td class="no-wrap"><a href="{$basePath}/invoices/{$project->invoice->year}/{$project->invoice->filename}" title="Faktura {$project->invoice->filename}" target="_blank"><img src="{$basePath}/images/pdf.png" alt="PDF">{$project->invoice->filename}</a></td>
+        <td class="center"><span onclick="showHideDetail({$project->id});" id="details_{$project->id}" class="mybutton b_arrowup b_arrowdown no_text" title="Detaily"></span></td>
+    </tr>
+
+    <tr class="hidden" id="{$project->id}">
+        <td class="row_no"></td><td class="details" colspan="8">
+        <table class="details">
+            <tr><td>Typ projektu</td><td>{$project->type}</td></tr>
+            <tr><td>Projekt založil</td><td>{$project->creator->name} {$project->creator->surname}</td></tr>
+            <tr><td>Vedoucí projektu</td><td>{$project->leader->name} {$project->leader->surname}</td></tr>
+            <tr><td>Zdrojový jazyk</td><td><img src="{$basePath}/images/languages/{$project->source_lang->icon}" alt="{$project->source_lang->shortcut}"> {$project->source_lang->name}</td></tr>
+            <tr><td>Cílové jazyky a překladatelé</td><td>
+                <table class="inner">
+                    <tr><th>Jazyk</th><th>Překladatel</th><th>Cena</th></tr>
+                    {foreach $project->related('translator_project') as $translator_project}
+                        <tr>
+                            <td><img src="{$basePath}/images/languages/{$translator_project->language->icon}" alt="{$translator_project->language->shortcut}"> {$translator_project->language->name}</td>
+                            <td>
+                                <a href="#" data-reveal-id="translatorProfile_{$translator_project->translator->id}" class="mybutton {$translator_project->translator->post_id|renderTranslatorIcon}">{$translator_project->translator->name} {$translator_project->translator->surname}</a>
+                                <!-- hidden inline form -->
+                                <div id="translatorProfile_{$translator_project->translator->id}" class="reveal-modal">
+                                    <h2>Detail překladatele</h2>
+                                    <table class="popup">
+                                    <tr><td>Jméno a příjmení</td>   <td>{$translator_project->translator->surname}  {$translator_project->translator->name}</td></tr>
+                                    <tr><td>Adresa</td>   <td>{$translator_project->translator->address}<br>{$translator_project->translator->postcode} {$translator_project->translator->city}</td></tr>
+                                    <tr><td>Email</td>    <td>{$translator_project->translator->email|email}</td></tr>
+                                    <tr><td>Telefon</td>  <td>{$translator_project->translator->tel_preset} {$translator_project->translator->telephone|number:0:',':' '}</td></tr>
+                                    <tr><td>Telefon 2</td><td>{$translator_project->translator->telephone2 ? $translator_project->translator->telephone2 : '-'}</td></tr>
+                                    <tr><td>IČ</td>       <td>{$translator_project->translator->reg_no}</td></tr>
+                                    <tr><td>DIČ</td>      <td>{$translator_project->translator->tax_id_no}</td></tr>
+                                    </table>
+                                    <a class="close-reveal-modal">&#215;</a>
+                                </div>
+                            </td>
+                            <td>{$translator_project->payment|number:0:'.':' '} Kč</td>
+                        </tr>
+                    {/foreach}
+                </table>
+            </td></tr>
+            <tr><td>Obor</td><td>{$project->field->name}</td></tr>
+            <tr><td>Fakturace (splatnost)</td><td>{$project->customer->legal_form|invoicing} - {$project->customer->due_date} dní</td></tr>
+            <tr><td>Zisk</td><td>{$project->income} Kč</td></tr>
+            <tr><td>Marže</td><td>{$project->income} %</td></tr>
+            <tr><td>Poznámky</td><td>{$project->proj_notes}</td></tr>
+        </table></td>
+    </tr>
+
+    {/foreach}
+    </tbody>
+</table>
+
+
+{/block}

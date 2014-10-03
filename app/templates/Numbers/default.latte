@@ -1,0 +1,83 @@
+{block content}
+
+<h1 n:block="title">NK v číslech</h1>
+
+<table class="default stats year_stats">
+    <tr><td class="differ" colspan="2"><h3>Rok {$current_year}</h3></td></tr>
+    <tr><td>Počet dokončených projektů</td><td class="right bold">{$numberOfYearsProjects}</td></tr>
+    <tr><td>Počet zrušených projektů</td><td class="right bold">{$numberOfCanceledYearsProjects}</td></tr>
+    <tr><td>Obrat firmy</td><td class="right bold">{$yearsSales|number:0:'.':' '} Kč</td></tr>
+    <tr><td>Měsíční obrat firmy</td><td class="right bold">{round($yearsSales/$current_month)|number:0:'.':' '} Kč</td></tr>
+    <tr><td>Zisk firmy</td><td class="right bold">{$yearsIncome|number:0:'.':' '} Kč</td></tr>
+    <tr><td>Měsíční zisk firmy</td><td class="right bold">{round($yearsIncome/$current_month)|number:0:'.':' '} Kč</td></tr>
+    <tr><td>Zisk společníků</td><td class="right bold">{$yearsPartnersIncome|number:0:'.':' '} Kč</td></tr>
+    <tr><td>Měsíční zisk společníků</td><td class="right bold">{round($yearsPartnersIncome/$current_month)|number:0:'.':' '} Kč</td></tr>
+    <tr><td>Celkový zisk</td><td class="right bold">{round($yearsPartnersIncome+$yearsIncome)|number:0:'.':' '} Kč</td></tr>
+    <tr><td>Měsíční zisk</td><td class="right bold">{round(($yearsPartnersIncome+$yearsIncome)/$current_month)|number:0:'.':' '} Kč</td></tr>
+    <tr><td>Průměrný obrat na projekt</td><td class="right bold">{$yearsSales/$numberOfYearsProjects|number:0:'.':' '} Kč</td></tr>
+    <tr><td>Průměrný zisk na projekt</td><td class="right bold">{$yearsIncome/$numberOfYearsProjects|number:0:'.':' '} Kč</td></tr>
+    <tr><td>Průměrná marže na projekt</td><td class="right bold">{$yearsSales == 0 ? '0' : (round($yearsIncome/$yearsSales*100))} %</td></tr>
+    <tr class="bold"><td>Pohledávky {$current_year} (bez DPH)</td><td class="right">{$yearsDebts|number:0:'.':' '} Kč</td></tr>
+    <tr class="bold"><td>Závazky {$current_year}</td><td class="right">{$yearsObligations|number:0:'.':' '} Kč</td></tr>
+</table>
+
+<table class="default stats total_stats">
+    <thead>
+    <tr><td class="differ" colspan="2"><h3>Celkové statistiky</h3></td></tr>
+    </thead>
+    <tbody>
+    <tr><td>Počet dokončených projektů</td><td class="right bold">{$numberOfFinishedProjects}</td></tr>
+    <tr><td>Počet zrušených projektů</td><td class="right bold">{$numberOfCancelledProjects}</td></tr>
+    <tr><td>Obrat firmy</td><td class="right bold">{$totalSales|number:0:'.':' '} Kč</td></tr>
+    <tr><td>Měsíční obrat firmy</td><td class="right bold">{round($totalSales/$number_of_company_months)|number:0:'.':' '} Kč</td></tr>
+    <tr><td>Zisk firmy</td><td class="right bold">{$totalIncome|number:0:'.':' '} Kč</td></tr>
+    <tr><td>Měsíční zisk firmy</td><td class="right bold">{round($totalIncome/$number_of_company_months)|number:0:'.':' '} Kč</td></tr>
+    <tr><td>Zisk společníků</td><td class="right bold">{$totalPartnersIncome|number:0:'.':' '} Kč</td></tr>
+    <tr><td>Měsíční zisk společníků</td><td class="right bold">{round($totalPartnersIncome/$number_of_company_months)|number:0:'.':' '} Kč</td></tr>
+    <tr><td>Celkový zisk</td><td class="right bold">{$totalIncome+$totalPartnersIncome|number:0:'.':' '} Kč</td></tr>
+    <tr><td>Měsíční zisk</td><td class="right bold">{round($totalIncome+$totalPartnersIncome/$number_of_company_months)|number:0:'.':' '} Kč</td></tr>
+    <tr><td>Průměrný obrat na projekt</td><td class="right bold">{$totalSales/$numberOfFinishedProjects|number:0:'.':' '} Kč</td></tr>
+    <tr><td>Průměrný zisk na projekt</td><td class="right bold">{$totalIncome/$numberOfFinishedProjects|number:0:'.':' '} Kč</td></tr>
+    <tr><td>Průměrná marže na projekt</td><td class="right bold">{$totalSales == 0 ? '0' : (round($totalIncome/$totalSales*100))} %</td></tr>
+    <tr class="bold no-wrap"><td>Celkové pohledávky (bez DPH)</td><td class="right">{$totalObligations|number:0:'.':' '} Kč</td></tr>
+    <tr class="bold"><td>Celkové závazky</td><td class="right">{$totalDebts|number:0:'.':' '} Kč</td></tr>
+    </tbody>
+</table>
+
+<table class="default stats company_stats">
+    <thead>
+    <tr><td class="differ" colspan="2"><h3>Firemní údaje</h3></td></tr>
+    </thead>
+    <tbody>
+    <tr><td>Úplný počátek firmy</td><td class="right bold">8. srpna 2009</td></tr>
+    <tr><td>Založení NK Translators s.r.o.</td><td class="right bold">9. března 2011</td></tr>
+    <tr><td>Počet aktivních překladatelů</td><td class="right bold">{$activeTranslators}</td></tr>
+    <tr><td>Počet deaktivovaných překladatelů</td><td class="right bold">{$inactiveTranslators}</td></tr>
+    <tr><td>Počet dosavadních zákazníků</td><td class="right bold">{$numberOfCustomers}</td></tr>
+    <tr><td>Počet ovládaných jazyků</td><td class="right bold">{$numberOfLanguages}</td></tr>
+    <tr><td>Počet ovládaných oborů</td><td class="right bold">{$numberOfFields}</td></tr>
+    </tbody>
+</table>
+
+<h3>Měsíční statistiky</h3>
+
+{control numbersYearForm}
+
+    {foreach $months as $month}
+        <table class="default stats month_stats">
+            <tr><td class="differ" colspan="2"><h3>{$month['name']}</h3></td></tr>
+            <tr><td>Počet dokončených projektů</td><td class="right">{$month['projects']|number:0:'.':' '}</td></tr>
+            <tr><td>Počet zrušených projektů</td><td class="right">{$month['canceled_projects']|number:0:'.':' '}</td></tr>
+            <tr><td>Obrat</td><td class="right">{round($month['sales'])|number:0:'.':' '} Kč</td></tr>
+            <tr><td>Zisk firmy</td><td class="right">{round($month['income'])|number:0:'.':' '} Kč</td></tr>
+            <tr><td>Zisk společníků</td><td class="right">{round($month['partners_income'])|number:0:'.':' '} Kč</td></tr>
+            <tr><td>Celkový zisk</td><td class="right">{round($month['partners_income']+$month['income'])|number:0:'.':' '} Kč</td></tr>
+            <tr><td>Průměrný obrat na projekt</td><td class="right">{$month['projects'] == 0 ? '0' : round($month['sales']/$month['projects'])|number:0:'.':' '} Kč</td></tr>
+            <tr><td>Průměrný zisk na projekt</td><td class="right">{$month['projects'] == 0 ? '0' : round($month['income']/$month['projects'])|number:0:'.':' '} Kč</td></tr>   
+            <tr><td>Průměrná marže na projekt</td><td class="right">{$month['sales'] == 0 ? '0' : round($month['income']/$month['sales']*100)|number:0:'.':' '} %</td></tr>
+        </table>
+    {/foreach}
+
+    <div class="clear"></div>
+    
+{/block}

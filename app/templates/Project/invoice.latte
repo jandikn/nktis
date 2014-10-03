@@ -1,0 +1,73 @@
+{block content}
+
+<h1 n:block="title">Fakturace</h1>
+
+	<table class="default">
+	<thead>
+	<tr>
+	    <th class="center">Id</th>
+	    <th>Název</th>
+	    <th>Název</th>
+	    <th>Zákazník</th>
+	    <th class="right">Cena bez DPH</th>
+	    <th class="right">Cena s DPH</th>
+	    <th class="center">Fakturace</th>
+	</tr>
+	</thead>
+	<tbody>
+	{var $i=0}
+
+	{foreach $projects as $project}
+	<tr class="show">
+
+	    <td class="row_no">{++$i}</td>
+            <td></td>
+	    <td>
+	        {$project->name} 
+	        {if $project->proj_notes != NULL}<span class="float_right">
+	        <a href="#" data-reveal-id="project_notes_{$project->id}" class="mybutton b_note no_text" title="Poznámka"></a></span>
+	        <!-- hidden inline form -->
+	        <div id="project_notes_{$project->id}" class="reveal-modal">
+	            <h2>Poznámky</h2>
+	            <p>{$project->proj_notes}</p>
+	            <a class="close-reveal-modal">&#215;</a>
+	        </div>
+	        {/if}
+	    </td>
+	    <td><a href="#" data-reveal-id="customerProfile_{$project->customer->id}" class="mybutton b_info" title="Detaily zákazníka">{$project->customer->surname} {$project->customer->name}</a>
+	        <!-- hidden inline form -->
+	        <div id="customerProfile_{$project->customer->id}" class="reveal-modal">
+	            <legend>{$project->customer->surname} {$project->customer->name} {if $project->customer->company != null}- {$project->customer->company}{/if}</legend>
+	            <table class="default">
+	            <tr><td>Adresa</td>   <td>{$project->customer->address}<br>{$project->customer->postcode|postcode} {$project->customer->city}</td></tr>
+	            <tr><td>Email</td>    <td>{$project->customer->email}</td></tr>
+	            <tr><td>Telefon</td>  <td>{$project->customer->telephone}</td></tr>
+	            <tr><td>Telefon 2</td><td>{$project->customer->telephone ? $project->customer->telephone : '-'}</td></tr>
+	            <tr><td>IČ</td>       <td>{$project->customer->reg_no}</td></tr>
+	            <tr><td>DIČ</td>      <td>{$project->customer->tax_id_no}</td></tr>
+	            <tr><td>Web</td>      <td>{$project->customer->web}</td></tr>
+	            <tr><td>Fakturace</td><td>{$project->customer->legal_form|invoicing} - {$project->customer->due_date} dní</td></tr>
+	            </table>
+	            <a class="close-reveal-modal">&#215;</a>
+	        </div>
+	        {if $project->customer->company != null}{$project->customer->company}{/if}
+	        </td>
+	    <td class="right no-wrap no-wrap">{$project->price|number:0:',':' '} Kč</td>
+	    <td class="right no-wrap">{if $project->customer->legal_form == 'corporate'}{$project->price|priceWithVAT|number:0:',':' '} Kč {else} - {/if}</td>
+	    <td class="right no-wrap">
+	        {if $project->customer->legal_form == 'individual'}<a href="#" data-reveal-id="fakturace_{$project->id}" class="mybutton b_invoice_individual" title="Detaily zákazníka">Fakturovat {$project->customer->due_date} dní</a>
+            {elseif $project->customer->legal_form == 'corporate'}<a href="#" data-reveal-id="fakturace_{$project->id}" class="mybutton b_invoice_corporate" title="Detaily zákazníka">Fakturovat {$project->customer->due_date} dní</a>
+            {else}<a href="#" data-reveal-id="fakturace_{$project->id}" class="mybutton b_invoice_abroad" title="Detaily zákazníka">Fakturovat {$project->customer->due_date} dní</a>
+            {/if}
+	    </td>
+	</tr>
+
+	{/foreach}
+	</tbody>
+	</table>
+
+    <div class="small_form">
+        {control uploadAggregateInvoiceForm}
+    </div>
+        
+{/block}

@@ -1,0 +1,52 @@
+{block content}
+
+<h1 n:block="title">Novy projekt</h1>
+
+{form newProjectForm}
+<table id="new_proj">
+	<tr>
+		<th>{label proj_type /}</th><td colspan="3">{input proj_type}</td>
+	</tr>
+	<tr>
+		<th>{label proj_name /}</th><td colspan="3">{input proj_name}</td>
+	</tr>
+	<tr>
+		<th>{label customer /}</th><td colspan="4">{input customer}</td>
+	</tr>
+	<tr><th width="200">{label source_language /}</th><th width="200">{label target_language /}</th><th>{label price /}</th></tr>
+
+	{foreach $form[source_language]->items as $key => $label}
+		    <tr>
+		    	<td>
+		    		<label n:name="target_language:$key"><input n:name="target_language:$key"> {$label}</label>
+		    	</td>
+		    </tr>
+	{/foreach}
+
+	{foreach $form[target_language]->items as $key => $label}
+	    <tr><td>{input target_language:$key}{label target_language:$key /}</td></tr>
+	{/foreach}
+
+	<tr><td>{input source_language}</td><td>{input target_language}</td><td>{input price}</td></tr>
+	<tr>
+		<th>{label pages /}</th><td>{input pages}</td>
+	</tr>
+	<tr>
+		<th>{label extra_payment /}</th><td>{input extra_payment}</td>
+	</tr>
+	<tr>
+		<th>{label discount /}</th><td>{input discount}</td>
+	</tr>
+	<tr>
+		<th>{label sleva /}</th><td>{input sleva}</td><td>{input sleva1}</td>
+	</tr>
+	<tr>
+		<th>{label field /}</th><td>{input field}</td>
+	</tr>
+	<tr>
+		<th>{label proj_leader /}</th><td>{input proj_leader}</td>
+	</tr>
+</table>
+{/form}
+
+{/block}

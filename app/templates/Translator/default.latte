@@ -1,0 +1,121 @@
+{block content}
+
+<script type="text/javascript">
+    $(document).ready(function(){
+      $('#search').keyup(function(){
+        var q = $(this).val();
+        if(q.length > 2){
+          $('#results').load('search.php?q='+q);
+        }else if(q.length == 0){
+          //$('#results').load('search.php?all');
+          $('#results').html("");
+        }
+      });
+    })
+</script>
+
+<h1 n:block="title">Překladatelé</h1>
+
+<div id="context_menu">
+    <a n:href="Translator:new" class="mybutton b_add" title="Nový překladatel">Nový překladatel</a>
+    <div class="float_right">
+        <span class="mybutton b_arrowup" onclick="hideAllDetail();" id="show_all">Schovat vše</span>
+        <span class="mybutton b_arrowdown" onclick="showAllDetail();" id="hide_all">Rozbalit vše</span>
+    </div>
+</div>
+
+<table class="default">
+    <thead>
+    <tr>
+        <th class="center">Filtry</th><td></td><td></td><td></td><td></td><td><input type="text" id="search"></td><td></td><td></td><td></td><td></td><td></td><td></td>
+    </tr>
+    <tr>
+        <th class="center">Id</th>
+        <th class="center">Počet překladů</th>
+        <th class="center">CAT</th>
+        <th class="center">Titul</th>
+        <th>Jméno</th>
+        <th>Příjmení</th>
+        <th>E-mail</th>
+        <th>Telefon</th>
+        <th class="center">ŽL</th>
+        <th class="center">Hodnocení</th>
+        <th>Editace</th>
+        <th class="center">Detaily</th>
+    </tr>
+    </thead>
+    <tbody>
+    {var $i=0}
+    {foreach $translators as $translator}
+    <tr class="show">
+        <td class="row_no">{++$i}</td>
+        <td class="center">{count($translator->related('translator_project'))}</td>
+        <td class="center">{if count($translator->related('translator_cattool')) != 0}<img src="{$basePath}/images/cat_tools.png" alt="CAT" title="CAT nástroje">{/if}</td>
+        <td class="right">{$translator->title}</td>
+        <td>{$translator->name}</td>
+        <td>{$translator->surname}</td>
+        <td><a href="mailto:{$translator->email}" title="Napsat e-mail" class="send_email"><img src="{$basePath}/images/send_email.png" alt="e-mail">{$translator->email}</a></td>
+        <td>{$translator->tel_preset} {$translator->telephone|number:0:',':' '}</td>
+        <td class="center">{if $translator->reg_no != ""}<img src="{$basePath}/images/accept.png" alt="Ano">{else}<img src="{$basePath}/images/cross.png" alt="Ano">{/if}</td>
+        <td class="center">{count($translator->related('translator_cattool'))}</td>
+        <td class="no-wrap">
+            <a n:href="Translator:edit $translator->id" class="mybutton b_edit">Edit</a>
+            <a n:href="Translator:delete $translator->id" class="mybutton b_delete">Deaktivovat</a>
+        </td>
+        <td class="center"><span onclick="showHideDetail({$translator->id});" id="details_{$translator->id}" class="mybutton b_arrowup b_arrowdown no_text" title="Detaily"></span></td>
+    </tr>
+    <tr class="hidden" id="{$translator->id}">
+        <td class="row_no"></td><td class="" colspan="11" width="900">
+        <table class="details">
+            <tr>
+                <td width="120">Jazyky</td>
+                <td colspan="2" width="500">
+                    <table class="inner">
+                        <tr><th>Jazyk</th><th>Překlady / NS</th><th>Korektury / NS</th><th>Tlumočení / NS</th></tr>
+                        {foreach $translator->related('translator_language') as $translator_language}
+                            {if $translator_language->native_language}<tr class="native_language">{else}<tr>{/if}
+                                <td><img src="{$basePath}/images/languages/{$translator_language->language->icon}" alt="{$translator_language->language->shortcut}"> {$translator_language->language->name}</td>
+                                <td>{$translator_language->translation_charge} Kč</td>
+                                <td>{$translator_language->proofreading_charge} Kč</td>
+                                <td>{$translator_language->interpretation_charge} Kč</td>
+                            </tr>
+                        {/foreach}
+                    </table>
+                </td>
+                <td rowspan="10"><img src="{$basePath}/images/profiles/{$translator->profile_pic}" alt="{$translator->profile_pic}" class="profile"></td>
+            </tr>
+            <tr>
+                <td>Obory</td>
+                <td>
+                    {foreach $translator->related('translator_field') as $translator_field}
+                        {$translator_field->field->name}{if !$iterator->last},{/if}
+                    {/foreach}
+                </td>
+            </tr>
+            <tr>
+                <td>CAT nástroje <img src="{$basePath}/images/cat_tools.png" alt="CAT tools" class="float_right"></td>
+                <td>
+                    {foreach $translator->related('translator_cattool') as $translator_cattool}
+                        {$translator_cattool->cat_tool->name}{if !$iterator->last},{/if}
+                    {/foreach}
+                </td>
+            </tr>
+            <tr><td>Adresa</td><td>{$translator->address}, {$translator->postcode} {$translator->city}</td></tr>
+            <tr><td>IČ</td><td>{$translator->reg_no}</td></tr>
+            <tr><td>DIČ</td><td>{$translator->tax_id_no}</td></tr>
+            <tr>
+                <td>Životopis</td>
+                <td>{if $translator->cv != ""}<a href="{$basePath}/cv/{$translator->cv}" target="_blank"><img src="{$basePath}/images/pdf.png" alt="Životopis">Životopis</a>
+                    {else}Není k dispozici{/if}
+                </td>
+            </tr>
+            <tr><td>Poznámky</td><td>{if $translator->notes == ""}-{else}{$translator->notes}{/if}</td></tr>
+            <tr><td>Částka k obdržení</td> <td>Kč</td></tr>
+            <tr><td>Celkový výdělek</td><td> Kč</td></tr>
+        </table></td>
+    </tr>
+    {/foreach}
+    </tbody>
+</table>
+
+{/block}

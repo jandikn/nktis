@@ -1,0 +1,154 @@
+{block content}
+
+<h1 n:block="title">Nový překladatel</h1>
+
+{form newTranslatorForm class => 'newTranslatorForm'}
+
+<!-- Jednoduché vykreslení chyb -->
+<ul class="errors" n:if="$form->hasErrors()">
+        <li n:foreach="$form->errors as $error">{$error}</li>
+</ul>
+
+<table id="new_translator_data">
+    
+    <tr>
+        <th>{label title /}</th>
+        <td colspan='3'>{input title}</td>
+    </tr>
+
+    <tr class="required">
+        <th>{label name /}</th>
+        <td colspan='3'>{input name}</td>
+    </tr>
+
+    <tr class="required">
+        <th>{label surname /}</th>
+        <td colspan='3'>{input surname}</td>
+    </tr>
+
+    <tr class="required">
+        <th>{label email /}</th>
+        <td colspan='3'>{input email}</td>
+    </tr>
+
+    <tr class="required">
+        <th>{label telephone /}</th>
+        <td colspan='3'>{input tel_preset}{input telephone}</td>
+    </tr>
+
+    <tr class="required">
+        <th>{label address /}</th>
+        <td colspan='3'>{input address}</td>
+    </tr>
+
+    <tr class="required">
+        <th>{label postcode /}a{label city /}</th>
+        <td colspan='3'>{input postcode}{input city}</td>
+    </tr>
+
+    <tr class="required">
+        <th>{label reg_no /}</th>
+        <td colspan='3'>{input reg_no}</td>
+    </tr>
+
+    <tr>
+        <th>{label tax_id_no /}</th>
+        <td colspan='3'>{input tax_id_no}</td>
+    </tr>
+
+    <tr>
+        <th>{label profile_pic /}</th>
+        <td colspan='3'>{input profile_pic}</td>
+    </tr>
+
+    <tr>
+        <th>{label cv /}</th>
+        <td colspan='3'>{input cv}</td>
+    </tr>
+
+    <tr>
+        <th>{label notes /}</th>
+        <td colspan='3'>{input notes}</td>
+    </tr>
+
+    <tr class="required">
+        <th class="valign_top">{label field /}</th>
+        <td class="valign_top">
+                    {foreach $fields as $field}
+                        {$form['field']->getControlPart($field)}
+                        {$field->name}
+                        <br>
+                    {/foreach}
+        </td>
+        
+        <th class="valign_top">{label cattool /}</th>
+        <td class="valign_top">
+                    {foreach $cattools as $cattool}
+                        {$form['cattool']->getControlPart($cattool)}
+                        {$cattool->name}
+                        <br>
+                    {/foreach}
+                        
+                    {input otherCATcheck}{label otherCATcheck /}<br>
+                    {$form['otherCATname']->control->disabled(true)}
+        </td>
+    </tr>
+
+    <tr><td><a href="{link ares!, 75336855}" class="ajax button">ARES</a></td></tr>
+
+</table>
+    
+<table class='float_right'>
+        
+    <tr class="required">
+        <th class="valign_top">{label post /}</th>
+        <td>{foreach $posts as $post => $label}
+            {$form['post']->getControlPart($post-1)}
+            {$label->icon|renderPostIcon}
+            {$form['post']->getLabelPart($post-1)}
+            <br>
+            {/foreach}
+        </td>
+    </tr>
+
+    <tr class="required">
+        <th class="valign_top">{label languages /}</th>
+        <td>
+            <table class="inner">
+            <tr class="required">
+                <th>Jazyk</th><th>Rodný</th><th>Překlady / NS</th><th>Korektury / NS</th><th>Tlumočení / NS</th>
+            </tr>
+            {foreach $languages as $language}
+                <tr class="required">
+                <td>
+                <!--{$form['languages']->getControlPart($language)}-->
+                <input type="checkbox" name="languages[]" onclick="enableDisableIdEl('frm-newTranslatorForm-native_language-{$language->id}'); enableDisableIdEl('frm-newTranslatorForm-translation_price_{$language->id}'); enableDisableIdEl('frm-newTranslatorForm-proofreading_price_{$language->id}'); enableDisableIdEl('frm-newTranslatorForm-interpretation_price_{$language->id}');" data-nette-rules='[{"op":":minLength","msg":"Musí být vybrány minimálně 2 jazyky překladatele.","arg":2}]' value="{$language->id}">
+                {$language->icon|renderLanguageIcon}
+                {$language->name}
+                </td>
+
+                <td>{$form['native_language']->getControlPart($language)->disabled(true)}</td>
+                <td>{$form['translation_price_'.$language->id]->control->disabled(true)} Kč</td>
+                <td>{$form['proofreading_price_'.$language->id]->control->disabled(true)} Kč</td>
+                <td>{$form['interpretation_price_'.$language->id]->control->disabled(true)} Kč</td>
+                </tr>
+            {/foreach}   
+            </table>
+        </td>
+    </tr>
+
+    
+
+</table>           
+            
+<div class="submit_form">
+    <tr>
+    <th>{label submit /}</th>
+    <td>{input submit}</td>
+    </tr>
+</div>
+        
+{/form}
+
+
+{/block}

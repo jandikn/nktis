@@ -1,0 +1,46 @@
+{block content}
+
+<h1 n:block="title">Úkoly</h1>
+
+{snippet newTaskForm}
+<fieldset>
+    <div class="task-form">
+        <h2>Nový úkol</h2>  
+        {control newTaskForm}
+
+    </div>
+
+</fieldset>
+{/snippet}
+
+{snippet taskList}
+<table class="default">
+    <thead>
+    <tr>
+        <th>Id</th>
+        <th>Úkol</th>
+        <th>Vytvořil</th>
+        <th>Pověřený</th>
+        <th class="no-wrap">Datum vytvoření</th>
+        <th>Editace</th>
+    </tr>
+    </thead>
+    <tbody>
+    {foreach $tasks as $task}
+    <tr>
+        <td class="row_no">{$pom++}</td>
+        <td>{$task->task}</td>
+        <td>{$task->creator->name} {$task->creator->surname}</td>
+        <td>{$task->commissioned->name} {$task->commissioned->surname}</td>
+        <td>{$task->date|date:'j. n. Y'}</td>
+        <td class="no-wrap">
+            <a n:if="!$task->status" n:href="taskDone! $task->id" class="ajax mybutton b_ok" onclick="confirm('Úkol hotov?');">Hotovo</a>
+            <a n:if="!$task->status" n:href="deleteTask! $task->id" class="ajax mybutton b_cancel" onclick="confirm('Smazat úkol?');">Smazat</a>
+        </td>
+    </tr>
+    {/foreach}
+    </tbody>
+</table>
+{/snippet}
+
+{/block}

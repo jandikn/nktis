@@ -1,0 +1,39 @@
+{block content}
+
+<h1 n:block="title">Můj profil</h1>
+
+<div id="context_menu">
+    <a n:href="MyProfile:edit $myProfile->id" class="mybutton b_edit" title="Editovat profil">Editovat profil</a>
+</div>
+
+<table class="default">
+    <tr><th>Titul</th>                  <td>{$myProfile->title}</td><td rowspan="12" width="400" class="center"><img src="{$basePath}/images/profiles/{$myProfile->profile_pic}" alt="{$myProfile->profile_pic}" class="profile"></td></tr>
+    <tr><th>Jméno</th>                  <td>{$myProfile->name}</td></tr>
+    <tr><th>Příjmení</th>               <td>{$myProfile->surname}</td></tr>
+    <tr><th>E-mail</th>                 <td>{$myProfile->email}</td></tr>
+    <tr><th>Telefon</th>                <td>+{$myProfile->tel_preset} {$myProfile->telephone|number:0:',':' '}</td></tr>
+    <tr><th>Adresa</th>                 <td>{$myProfile->address}</td></tr>
+    <tr><th>IČ</th>                     <td>{$myProfile->reg_no}</td></tr>
+    <tr><th>Ovládané jazyky</th>        <td>
+                    <table class="inner">
+                        <tr><th>Jazyk</th><th>Překlady / NS</th><th>Korektury / NS</th><th>Tlumočení / NS</th></tr>
+                        {foreach $myProfile->related('translator_language') as $my_language}
+                            {if $my_language->native_language}<tr class="native_language">{else}<tr>{/if}
+                                <td><img src="{$basePath}/images/languages/{$my_language->language->icon}" alt="{$my_language->language->shortcut}"> {$my_language->language->name}</td>
+                                <td>{$my_language->translation_charge} Kč</td>
+                                <td>{$my_language->proofreading_charge} Kč</td>
+                                <td>{$my_language->interpretation_charge} Kč</td>
+                            </tr>
+                        {/foreach}
+                    </table></td></tr>
+    <tr><th>Ovládané obory</th>         <td>
+                    {foreach $myProfile->related('translator_field') as $my_field}
+                        {$my_field->field->name}{if !$iterator->last},{/if}
+                    {/foreach}</td></tr>
+    <tr><th>Částka k obdržení</th>      <td>{$myProfile->payment_to_get|number:0:',':' '} Kč</td></tr>
+    <tr><th>Celkový výdělek</th>        <td>{$myProfile->total_earnings|number:0:',':' '} Kč</td></tr>
+    <tr><th>Počet vyhotovených projektů</th> <td>{count($myProfile->related('translator_project'))}</td></tr>
+</table>
+
+
+{/block}
